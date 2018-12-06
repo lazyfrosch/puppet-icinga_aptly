@@ -1,0 +1,2 @@
+---
+icinga_aptly::manage_apache: true

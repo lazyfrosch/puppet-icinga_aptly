@@ -11,7 +11,7 @@ Vagrant.configure(2) do |config|
   config.vm.define 'aptly' do |host|
     host.vm.box = 'bento/debian-8'
     host.vm.hostname = "aptly.#{domain}"
-    host.vm.network 'forwarded_port', guest: 8080, host: 8080
+    host.vm.network 'forwarded_port', guest: 80, host: 8080
 
     config.vm.provider 'virtualbox' do |vb|
       vb.cpus = 2
@@ -25,7 +25,7 @@ Vagrant.configure(2) do |config|
     config.vm.provision 'puppet' do |puppet|
       # Note: only works with vboxsf
       puppet.manifests_path = ['vm', '/vagrant/vagrant']
-      puppet.options = '--show_diff'
+      puppet.options = '--show_diff --hiera_config /vagrant/vagrant/hiera.yaml'
     end
   end
 end
