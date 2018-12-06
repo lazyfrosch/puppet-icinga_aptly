@@ -1,2 +1,22 @@
 ---
 icinga_aptly::manage_apache: true
+icinga_aptly::apache::auth_users:
+  icingaadmin: '$apr1$ohz5ilLf$UdJeRxaBqbi17p2vna43v.' # icinga
+#icinga_aptly::apache::require_ip:
+#  - 10.0.0.0/8
+
+classes:
+  - apache
+  - apache::vhosts
+
+apache::default_vhost: false
+
+apache::vhosts::vhosts:
+  aptly:
+    port: 80
+    docroot: /var/lib/aptly/public
+    options:
+      - Indexes
+      - FollowSymLinks
+    override:
+      - All

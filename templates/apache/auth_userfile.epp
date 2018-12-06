@@ -1,0 +1,4 @@
+# Managed by Puppet
+<% $icinga_aptly::apache::auth_users.each |$user, $password| { -%>
+<%= $user %>:<%= $password %>
+<% } -%>

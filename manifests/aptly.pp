@@ -36,6 +36,13 @@ class icinga_aptly::aptly {
     'aptly home':
       ensure => directory,
       path   => $icinga_aptly::aptly_home;
+    'aptly db':
+      ensure => directory,
+      path   => "${icinga_aptly::aptly_home}/db",
+      mode   => '0640';
+    'aptly public':
+      ensure => directory,
+      path   => "${icinga_aptly::aptly_home}/public";
     'aptly.conf':
       ensure  => file,
       path    => "${icinga_aptly::aptly_home}/.aptly.conf",

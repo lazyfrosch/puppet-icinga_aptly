@@ -1,0 +1,20 @@
+RedirectMatch ^/api$ /api/
+
+<Location "/api/">
+  AuthType Basic
+  AuthName "Aptly API"
+  AuthBasicProvider file
+  AuthUserFile "<%= $icinga_aptly::apache::_auth_userfile %>"
+
+  <RequireAll>
+    Require valid-user
+    <%- unless empty($icinga_aptly::apache::require_ip) { -%>
+    Require ip <%= join($icinga_aptly::apache::require_ip, ' ') %>
+    <%- } -%>
+  </RequireAll>
+
+  ProxyPreserveHost On
+  ProxyPass "<%= $icinga_aptly::apache::aptly_backend %>"
+  ProxyPassReverse "<%= $icinga_aptly::apache::aptly_backend %>"
+  ProxyAddHeaders On
+</Location>
