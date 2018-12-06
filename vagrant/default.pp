@@ -1,0 +1,1 @@
+include ::icinga_aptly

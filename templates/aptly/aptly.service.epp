@@ -1,0 +1,14 @@
+<%- | String $listen_addr
+| -%>
+[Unit]
+Description=Aptly Service API
+
+[Service]
+User=aptly
+Group=aptly
+Restart=always
+ExecStart=/usr/bin/aptly api serve -listen=<%= $listen_addr %> -no-lock
+LimitNOFILE=8192
+
+[Install]
+WantedBy=multi-user.target

@@ -19,12 +19,13 @@ Vagrant.configure(2) do |config|
       config.vm.synced_folder '.', '/vagrant', :type => 'virtualbox' # avoid rsync
     end
 
-    config.vm.provision 'shell', path: 'vagrant/shell_provisioner.sh'
+    config.vm.provision 'shell', path: 'vagrant/base-system.sh'
+    config.vm.provision 'shell', path: 'vagrant/puppet-modules.sh'
 
     config.vm.provision 'puppet' do |puppet|
       # Note: only works with vboxsf
       puppet.manifests_path = ['vm', '/vagrant/vagrant']
-      puppet.options = '--modulepath /vagrant/spec/fixtures/modules --show_diff'
+      puppet.options = '--show_diff'
     end
   end
 end
