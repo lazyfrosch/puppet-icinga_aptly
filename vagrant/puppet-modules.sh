@@ -14,6 +14,7 @@ module_install() {
 module_install puppetlabs-apache
 module_install puppetlabs-apt
 module_install puppetlabs-stdlib
+module_install puppetlabs-vcsrepo
 
 module_install lazyfrosch-vagrantenv
 
