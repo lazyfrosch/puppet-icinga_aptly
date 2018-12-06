@@ -1,0 +1,31 @@
+---
+stages:
+  - test
+
+.test: &test
+  image: ruby:xx
+  stage: test
+  tags:
+    - docker
+  before_script:
+    - bundle -v
+    - rm -f Gemfile.lock
+    - bundle install --jobs=3 --retry=3 --path vendor/bundle
+    - bundle show
+  script:
+    - bundle exec rake test
+  cache:
+    paths:
+      - vendor
+
+test/puppet-5:
+  <<: *test
+  image: ruby:2.4
+  variables:
+    PUPPET_VERSION: '~> 5.0'
+
+test/puppet-6:
+  <<: *test
+  image: ruby:2.5
+  variables:
+    PUPPET_VERSION: '~> 6.0'
