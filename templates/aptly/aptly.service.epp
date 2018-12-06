@@ -7,6 +7,7 @@ Description=Aptly Service API
 User=aptly
 Group=aptly
 Restart=always
+Environment=GIN_MODE=release
 ExecStart=/usr/bin/aptly api serve -listen=<%= $listen_addr %> -no-lock
 LimitNOFILE=8192
 
