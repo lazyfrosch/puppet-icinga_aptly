@@ -26,12 +26,25 @@ class icinga_aptly::aptly {
     password => '!',
   }
 
-  file { 'aptly home':
-    ensure => directory,
-    path   => $icinga_aptly::aptly_home,
-    owner  => 'aptly',
-    group  => 'aptly',
-    mode   => '0755',
+  file {
+    default:
+      ensure => file,
+      owner  => 'aptly',
+      group  => 'aptly',
+      mode   => '0644',
+      notify => Service['aptly-api'];
+    'aptly home':
+      ensure => directory,
+      path   => $icinga_aptly::aptly_home;
+    'aptly.conf':
+      ensure  => file,
+      path    => "${icinga_aptly::aptly_home}/.aptly.conf",
+      owner   => 'aptly',
+      group   => 'aptly',
+      mode    => '0640',
+      content => epp('icinga_aptly/aptly/aptly.conf.epp', {
+        'rootDir' => $icinga_aptly::aptly_home,
+      });
   }
 
   file {
