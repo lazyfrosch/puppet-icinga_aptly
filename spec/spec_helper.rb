@@ -13,7 +13,7 @@ RSpec.configure do |c|
   c.default_facts = default_facts
 
   # Coverage generation
-  # c.after(:suite) do
-  #   RSpec::Puppet::Coverage.report!
-  # end
+  c.after(:suite) do
+    RSpec::Puppet::Coverage.report!
+  end
 end

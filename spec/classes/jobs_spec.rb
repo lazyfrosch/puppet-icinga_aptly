@@ -1,0 +1,28 @@
+require 'spec_helper'
+
+describe 'icinga_aptly::jobs' do
+  on_supported_os.each do |os, facts|
+    context "on #{os}" do
+      let(:facts) { facts }
+
+      context 'with default values' do
+        it { is_expected.to contain_class('icinga_aptly::jobs') }
+
+        it do
+          is_expected.to contain_file('aptly-cleanup-snapshots')
+            .with_path(%r{^/usr/local/bin/})
+            .with_mode('0755')
+            .with_content(%r{^#!/bin/bash\n})
+        end
+
+        it do
+          is_expected.to contain_cron('aptly-cleanup-snapshots')
+            .with_command(%r{^/usr/local/bin/aptly-cleanup-snapshots($| )})
+            .with_user('aptly')
+            .with_hour('*')
+            .with_minute('0')
+        end
+      end
+    end
+  end
+end
