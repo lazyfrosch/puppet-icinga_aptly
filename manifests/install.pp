@@ -54,19 +54,11 @@ class icinga_aptly::install {
       });
   }
 
-  file {
-    default:
-      ensure => file,
-      owner  => 'root',
-      group  => 'root',
-      mode   => '0644';
-    'aptly-cli':
-      path    => '/usr/local/bin/aptly',
-      content => file('icinga_aptly/aptly/aptly.sh'),
-      mode    => '0755';
-    'aptly-cleanup-snapshots':
-      path    => '/usr/local/bin/aptly-cleanup-snapshots',
-      content => file('icinga_aptly/aptly/aptly-cleanup-snapshots.sh'),
-      mode    => '0755';
+  file { '/usr/local/bin/aptly':
+    ensure  => file,
+    owner   => 'root',
+    group   => 'root',
+    mode    => '0755',
+    content => file('icinga_aptly/aptly/aptly.sh'),
   }
 }

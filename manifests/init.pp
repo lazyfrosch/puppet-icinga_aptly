@@ -15,7 +15,7 @@ class icinga_aptly(
   contain icinga_aptly::api
 
   contain icinga_aptly::content
-  contain icinga_aptly::rpms
+  contain icinga_aptly::jobs
 
   if $manage_apache {
     contain icinga_aptly::apache
