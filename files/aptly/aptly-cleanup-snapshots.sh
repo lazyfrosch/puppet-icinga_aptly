@@ -2,6 +2,11 @@
 
 set -euo pipefail
 
+if [ "$(id -un)" != aptly ]; then
+  echo "Executing command via sudo: $0"
+  exec sudo -u aptly "$0" "$@"
+fi
+
 log() {
   level="$2"
   if [ -z "$level" ]; then
