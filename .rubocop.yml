@@ -1,0 +1,33 @@
+require: rubocop-rspec
+AllCops:
+  TargetRubyVersion: 1.9
+  Include:
+    - ./**/*.rb
+  Exclude:
+    - files/**/*
+    - vendor/**/*
+    - .vendor/**/*
+    - pkg/**/*
+    - spec/fixtures/**/*
+    - Gemfile
+    - Rakefile
+    - Guardfile
+    - Vagrantfile
+
+Metrics/BlockLength:
+  Enabled: False
+
+Metrics/LineLength:
+  Enabled: False
+
+# We don't use rspec in this way
+RSpec/DescribeClass:
+  Enabled: False
+
+# Example length is not necessarily an indicator of code quality
+RSpec/ExampleLength:
+  Enabled: False
+
+# disable Yaml safe_load. This is needed to support ruby2.0.0 development envs
+Security/YAMLLoad:
+  Enabled: false

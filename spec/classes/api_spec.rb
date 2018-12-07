@@ -12,8 +12,8 @@ describe 'icinga_aptly::api' do
         it do
           is_expected.to contain_file('aptly-api.service')
             .with_content(%r{ExecStart=/usr/bin/aptly api serve})
-            .with_content(%r{-listen=127.0.0.1:8080})
-            .with_content(%r{-no-lock})
+            .with_content(/-listen=127.0.0.1:8080/)
+            .with_content(/-no-lock/)
         end
 
         it { is_expected.to contain_exec('aptly systemctl daemon-reload').with_refreshonly(true) }
