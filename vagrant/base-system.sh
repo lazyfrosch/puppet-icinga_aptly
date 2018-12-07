@@ -5,6 +5,26 @@ set -e
 OSTYPE="unknown"
 INITIAL_UPDATE=0
 
+disable_service() {
+  local name="$1"
+  if command -v systemctl &>/dev/null; then
+    if systemctl is-active "${name}".service >/dev/null; then
+      echo "Stopping ${name}.service"
+      systemctl stop "${name}".service
+    fi
+    if systemctl is-enabled "${name}".service &>/dev/null; then
+      echo "Disabling ${name}.service"
+      systemctl disable "${name}".service
+    fi
+  elif [ -e "/etc/init.d/${name}" ]; then
+    if service "${name}" status >/dev/null; then
+      echo "Stopping ${name}"
+      service "${name}" stop
+    fi
+    chkconfig "${name}" off >/dev/null
+  fi
+}
+
 if [ -x /usr/bin/lsb_release ]; then
     OSTYPE=$(lsb_release -i -s)
     CODENAME=$(lsb_release -sc)
@@ -90,3 +110,8 @@ if [ "$OSTYPE" = "RedHat" ]; then
         sed -i 's/^\\(SELINUX=\\)enforcing/\\1disabled/' /etc/selinux/config
     fi
 fi
+
+## Disable services
+disable_service puppet
+disable_service NetworkManager
+disable_service firewalld
