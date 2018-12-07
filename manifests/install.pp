@@ -1,4 +1,4 @@
-class icinga_aptly::aptly {
+class icinga_aptly::install {
   include icinga_aptly
 
   ensure_packages($icinga_aptly::params::gpg_packages)
@@ -60,11 +60,6 @@ class icinga_aptly::aptly {
       owner  => 'root',
       group  => 'root',
       mode   => '0644';
-    'aptly-api.service':
-      path    => '/etc/systemd/system/aptly-api.service',
-      content => epp('icinga_aptly/aptly/aptly.service.epp', {
-        listen_addr => $icinga_aptly::aptly_listen_addr,
-      });
     'aptly-cli':
       path    => '/usr/local/bin/aptly',
       content => file('icinga_aptly/aptly/aptly.sh'),
@@ -74,20 +69,4 @@ class icinga_aptly::aptly {
       content => file('icinga_aptly/aptly/aptly-cleanup-snapshots.sh'),
       mode    => '0755';
   }
-
-  exec { 'aptly systemctl daemon-reload':
-    command     => 'systemctl daemon-reload',
-    refreshonly => true,
-    user        => 'root',
-    path        => $facts['path'],
-    subscribe   => File['/etc/systemd/system/aptly-api.service'],
-  }
-
-  ~> service { 'aptly-api':
-    ensure    => running,
-    enable    => true,
-    subscribe => File['/etc/systemd/system/aptly-api.service'],
-  }
-
-  # TODO: cron jobs
 }

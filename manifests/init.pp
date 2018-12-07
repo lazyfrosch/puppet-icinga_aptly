@@ -10,7 +10,9 @@ class icinga_aptly(
   Enum['present', 'latest'] $content_repo_ensure = 'latest',
   String $content_repo_revision                  = 'master',
 ) inherits icinga_aptly::params {
-  contain icinga_aptly::aptly
+
+  contain icinga_aptly::install
+  contain icinga_aptly::api
 
   contain icinga_aptly::content
   contain icinga_aptly::rpms
