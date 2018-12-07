@@ -1,6 +1,6 @@
 {
   "__MANAGED_BY_PUPPET": true,
-  "rootDir": "<%= $rootDir %>",
+  "rootDir": "<%= $icinga_aptly::aptly_home %>",
   "downloadConcurrency": 4,
   "downloadSpeedLimit": 0,
   "architectures": [],

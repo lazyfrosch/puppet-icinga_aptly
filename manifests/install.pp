@@ -49,13 +49,12 @@ class icinga_aptly::install {
       owner   => 'aptly',
       group   => 'aptly',
       mode    => '0640',
-      content => epp('icinga_aptly/aptly/aptly.conf.epp', {
-        'rootDir' => $icinga_aptly::aptly_home,
-      });
+      content => epp('icinga_aptly/aptly/aptly.conf.epp');
   }
 
-  file { '/usr/local/bin/aptly':
+  file { 'aptly cli':
     ensure  => file,
+    path    => '/usr/local/bin/aptly',
     owner   => 'root',
     group   => 'root',
     mode    => '0755',
