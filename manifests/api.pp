@@ -9,9 +9,7 @@ class icinga_aptly::api {
       mode   => '0644';
     'aptly-api.service':
       path    => '/etc/systemd/system/aptly-api.service',
-      content => epp('icinga_aptly/aptly/aptly.service.epp', {
-        listen_addr => $icinga_aptly::aptly_listen_addr,
-      });
+      content => epp('icinga_aptly/aptly/aptly.service.epp');
   }
 
   exec { 'aptly systemctl daemon-reload':

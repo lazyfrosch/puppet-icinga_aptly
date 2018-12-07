@@ -1,4 +1,6 @@
 class icinga_aptly::content {
+  include icinga_aptly
+
   ensure_packages(['git'])
 
   $public_path = "${icinga_aptly::aptly_home}/public"
