@@ -3,6 +3,14 @@ class icinga_aptly::params {
     fail('Only osfamily Debian is supported here!')
   }
 
+  $helper_packages = [
+    'rpm',
+    'createrepo',
+    'ruby',
+    'curl',
+    'ca-certificates',
+  ]
+
   $_dist = $facts['os']['name']
   $_release = $facts['os']['release']['major']
 

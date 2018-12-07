@@ -7,6 +7,8 @@ describe 'icinga_aptly::install' do
       let(:os_name) { facts[:os]['name'] }
       let(:os_maj) { facts[:os]['release']['major'] }
 
+      let(:helper_packages) { %w[rpm createrepo ruby curl ca-certificates] }
+
       context 'with default values' do
         it { is_expected.to contain_class('icinga_aptly::install') }
         it { is_expected.to contain_class('icinga_aptly') }
@@ -19,6 +21,12 @@ describe 'icinga_aptly::install' do
           else
             is_expected.to contain_package('gnupg1')
             is_expected.to contain_package('gpgv1')
+          end
+        end
+
+        it do
+          helper_packages.each do |pkg|
+            is_expected.to contain_package(pkg)
           end
         end
 

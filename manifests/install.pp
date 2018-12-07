@@ -3,6 +3,8 @@ class icinga_aptly::install {
 
   ensure_packages($icinga_aptly::params::gpg_packages)
 
+  ensure_packages($icinga_aptly::params::helper_packages)
+
   apt::source { 'aptly':
     location => $icinga_aptly::aptly_repo_base,
     release  => $icinga_aptly::aptly_repo_dist,
