@@ -17,6 +17,7 @@ class icinga_aptly::jobs(
 
   ensure_packages([
     'python-requests',
+    'python-pexpect',
   ])
 
   file {

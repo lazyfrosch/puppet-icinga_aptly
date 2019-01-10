@@ -2,9 +2,11 @@
 
 import logging
 import os
-import subprocess
+import re
+from subprocess import check_output
 import sys
-import threading
+
+import pexpect
 
 LOG_FORMAT = "[%(asctime)s] [%(levelname)s] %(message)s"
 
@@ -12,8 +14,7 @@ class SigningError(StandardError):
     pass
 
 class RpmSigner(object):
-    gpg_name = "Icinga Open Source Monitoring (Build server)"
-    gpg_bin = "/usr/bin/gpg1"
+    gpg_bin = "/usr/bin/gpg"
 
     def __init__(self, file_name, **kwargs):
         self.file_name = file_name
@@ -23,43 +24,44 @@ class RpmSigner(object):
         self.stdout = None
         self.stderr = None
 
+        self.gpg_name = None
+
         for key, value in kwargs.iteritems():
             setattr(self, key, value)
 
+    def get_gpg_name(self):
+        if not self.gpg_name:
+            _out = check_output([self.gpg_bin, '-K', '--with-colon'])
+
+            keys = re.split(r"\r?\n", _out.strip())
+            if not keys:
+                raise SigningError("Could not detect a GPG private key!")
+            elif len(keys) > 1:
+                raise SigningError("Found multiple private keys, you need to specify the key!")
+            else:
+                _parts = re.split(r":", keys[0])
+
+            self.gpg_name = _parts[9]
+
+        return self.gpg_name
+
     def sign(self, timeout=10):
-        thread = threading.Thread(target=self._sign)
-        thread.start()
-
-        thread.join(timeout)
-        if thread.is_alive():
-            self.process.terminate()
-            thread.join()
-            self.returncode = 1
-            raise SigningError("Terminating RPM signing process after timeout (%d)" % (timeout))
-
-        if self.returncode != 0:
-            raise SigningError("RPM sign command for file '%s' failed:\n%s" % (self.file_name, self.stderr))
-
-    def _sign(self):
-        command = [
-            'rpm',
-            '-D', '%_gpg_name ' + self.gpg_name,
+        args = [
+            '-D', '%_gpg_name ' + self.get_gpg_name(),
             '-D', '%__gpg ' + self.gpg_bin,
             '--addsign', self.file_name
         ]
 
-        logging.debug("Running RPM addsign command: %s", command)
-        self.process = subprocess.Popen(command, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        logging.debug("Executing signing with pexpect: %s", args)
+        child = pexpect.spawn('rpm', args, timeout=timeout)
 
-        # TODO: wait for password input?
-        (self.stdout, self.stderr) = self.process.communicate()
+        child.expect('Enter pass phrase:')
+        child.sendline('')
+        child.expect(pexpect.EOF)
 
-        if self.stdout:
-            logging.debug("Process told us on stdout:\n%s", self.stdout.strip())
-        if self.stderr:
-            logging.warning("Process logged something on stderr:\n%s", self.stderr.strip())
-
-        self.returncode = self.process.returncode
+        if child.exitstatus:
+            self.returncode = child.exitstatus
+            raise SigningError("RPM sign command for file '%s' failed:\n%s" % (self.file_name, self.stderr))
 
 def parse_args(argv=None):
     """Setup default CLI arguments"""
