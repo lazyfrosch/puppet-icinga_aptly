@@ -7,17 +7,18 @@
 # This should work on a fileformat that "update-rpms.rb" ignores (no dash in upload path)
 #
 import argparse
-import os, sys
+import os
 from os.path import join, basename, getmtime, exists, isfile, relpath
+import sys
 from time import time
 from fnmatch import fnmatch
-import subprocess
-from subprocess import check_output
 import re
+from subprocess import check_output, CalledProcessError, STDOUT
 import json
 import shutil
-import requests
 from hashlib import sha1
+
+import requests
 
 aptly_home = os.environ.get('APLY_HOME', '/var/lib/aptly')
 aptly_api = os.environ.get('APLY_API', 'http://127.0.0.1:8080/api')
@@ -26,7 +27,8 @@ parser = argparse.ArgumentParser(description='Processing RPM uploads from Aptly'
 parser.add_argument('--upload', help='upload spool directory', default=('%s/upload' % aptly_home))
 parser.add_argument('--public', help='Public repository base', default=('%s/public' % aptly_home))
 parser.add_argument('--cleanup', help='cleanup stale directories', action='store_true')
-parser.add_argument('--cleanup-grace-time', metavar='SECONDS', help='Time needed for dirs to be considered stale', type=int, default=300)
+parser.add_argument('--cleanup-grace-time', metavar='SECONDS', help='Time needed for dirs to be considered stale',
+                    type=int, default=300)
 parser.add_argument('--force', action='store_true', help='Overwrite files in repository')
 parser.add_argument('--api', help='APTLY API (local without auth)', default=aptly_api)
 parser.add_argument('--noop', action='store_true', help='No operating mode')
@@ -56,8 +58,8 @@ def sign_rpm(file):
     else:
         print "Signing RPM %s" % file
         try:
-            check_output(['aptly-rpmsign', file], stderr=subprocess.STDOUT)
-        except subprocess.CalledProcessError as _e:
+            check_output(['aptly-rpmsign', file], stderr=STDOUT)
+        except CalledProcessError as _e:
             print "Running rpmsign failed: " + _e.output
             raise
 
@@ -109,7 +111,7 @@ def createrepo(path):
         print "Would sign repo metadata %s" % repo_xml
     else:
         if exists(repo_signature):
-           os.remove(repo_signature)
+            os.remove(repo_signature)
 
         print "Signing repo metadata"
         check_output(['gpg', '--detach-sign', '--armor', '--batch', '--no-tty', repo_xml])
@@ -132,7 +134,7 @@ def process_upload(path, files):
         raise StandardError, 'Unknown upload type "%s"!' % upload_type
 
 def aptly_safe_string(string):
-    return re.sub('\W+', '-', string)
+    return re.sub(r'\W+', '-', string)
 
 def process_upload_deb(path, files, upload_meta):
     target = upload_meta['target']
@@ -268,7 +270,8 @@ for root, dirs, files in os.walk(args.upload, topdown=False):
         continue
 
     # cleanup old empty dirs
-    if args.cleanup and not dirs and not files and args.cleanup_grace_time > 0 and getmtime(root) < (time() - args.cleanup_grace_time):
+    if (args.cleanup and not dirs and not files and args.cleanup_grace_time > 0 and
+            getmtime(root) < (time() - args.cleanup_grace_time)):
         if args.noop:
             print "Would cleanup empty directory: %s" % root
         else:
