@@ -165,7 +165,7 @@ def process_upload_deb(path, files, upload_meta):
     else:
         print "Adding upload '%s' to repo '%s'" % (upload, aptly_repo)
         r = requests.post(args.api + '/repos/%s/file/%s' % (aptly_repo, upload), data={})
-        if r.status_code != requests.codes.ok:
+        if r.status_code not in [requests.codes.ok, requests.codes.created]:
             raise StandardError, "Adding upload to repo '%s' failed: %s" % (aptly_repo, r.content)
 
     if args.noop:
