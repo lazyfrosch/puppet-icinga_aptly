@@ -15,6 +15,10 @@ class icinga_aptly::jobs(
 ) {
   include icinga_aptly
 
+  ensure_packages([
+    'python-requests',
+  ])
+
   file {
     default:
       ensure => file,
