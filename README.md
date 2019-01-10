@@ -1,5 +1,28 @@
 # icinga_aptly Puppet module
 
+## GPG Key
+
+Currently this module does not generate or manipulate any GPG key.
+
+You can create a key like this:
+
+```
+$ sudo su - aptly
+
+$ gpg --batch --gen-key <<GPG
+%no-ask-passphrase
+%no-protection
+%echo Generating a basic GPG key
+Key-Type: RSA
+Key-Usage: sign
+Expire-Date: 0
+Name-Real: Icinga Aptly Test
+Name-Email: info+aptlytest@icinga.com
+%commit
+%echo done
+GPG
+```
+
 ## Webserver
 
 By default the module does not touch Apache or it's config. You can use the Apache module to configure the basics.
