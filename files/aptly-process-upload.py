@@ -283,6 +283,7 @@ for root, dirs, files in os.walk(args.upload, topdown=False):
         process_upload(root, files)
     except StandardError, e:
         print >> sys.stderr, "Encountered an error during processing upload %s: %s" % (basename(root), e.message or e)
+        raise
 
 for repo in REFRESH_REPOS:
     createrepo(repo)
