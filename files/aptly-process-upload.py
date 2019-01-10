@@ -151,7 +151,14 @@ def process_upload_deb(path, files, upload_meta):
     print "Checking if repository '%s' exists" % aptly_repo
     r = requests.get(args.api + '/repos/%s' % aptly_repo)
     if r.status_code != requests.codes.ok:
-        raise StandardError, "Aptly repository '%s' does not exist on server!" % aptly_repo
+        if args.noop:
+            print "Would create repository '%s'" % aptly_repo
+        else:
+            r = requests.post(args.api + '/repos', json={
+                "Name": aptly_repo
+            })
+            if r.status_code != requests.codes.created:
+                raise StandardError, "Could not create Aptly repository '%s'" % aptly_repo
 
     if args.noop:
         print "Would add upload '%s' to repo '%s'" % (upload, aptly_repo)
