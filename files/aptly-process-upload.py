@@ -138,6 +138,11 @@ def process_upload_deb(path, files, upload_meta):
     target = upload_meta['target']
     release = upload_meta['release']
 
+    if 'architectures' in upload_meta:
+        architectures = list(upload_meta['architectures'])
+    else:
+        architectures = ['i386', 'amd64']
+
     if 'repo' in upload_meta:
         aptly_repo = upload_meta['repo']
     else:
@@ -181,10 +186,13 @@ def process_upload_deb(path, files, upload_meta):
             else:
                 print "Publishing a new repository '%s' to '%s'" % (aptly_repo, target)
 
+                _arch = architectures
+                _arch.append('source')
+
                 payload = {}
                 payload['SourceKind'] = 'local'
                 payload['Sources'] = [{'Name': aptly_repo}]
-                payload['Architectures'] = ['i386','amd64','source']
+                payload['Architectures'] = _arch
                 payload['Distribution'] = release
 
                 r = requests.post(args.api + '/publish/%s' % (aptly_target), json=payload)
