@@ -127,17 +127,24 @@ def process_upload(path, files):
     if upload_type == 'RPM':
         return process_upload_rpm(path, files, target, release)
     elif upload_type == 'DEB':
-        return process_upload_deb(path, files, target, release)
+        return process_upload_deb(path, files, upload_meta)
     else:
         raise StandardError, 'Unknown upload type "%s"!' % upload_type
 
 def aptly_safe_string(string):
     return re.sub('\W+', '-', string)
 
-def process_upload_deb(path, files, target, release):
-    # remove icinga- prefix
-    release_short = re.sub('^icinga-', '', release)
-    aptly_repo = 'icinga-%s-%s' % (aptly_safe_string(target), aptly_safe_string(release_short))
+def process_upload_deb(path, files, upload_meta):
+    target = upload_meta['target']
+    release = upload_meta['release']
+
+    if 'repo' in upload_meta:
+        aptly_repo = upload_meta['repo']
+    else:
+        # remove icinga- prefix
+        _short = re.sub('^icinga-', '', release)
+        aptly_repo = 'icinga-%s-%s' % (aptly_safe_string(target), aptly_safe_string(_short))
+
     aptly_target = re.sub('/', '_', re.sub('_', '__', target))
     upload = basename(path)
 
@@ -155,7 +162,7 @@ def process_upload_deb(path, files, target, release):
             raise StandardError, "Adding upload to repo '%s' failed: %s" % (aptly_repo, r.content)
 
     if args.noop:
-        print "Would publish repo '%s' to '%s'" % (aptly_repo, target)
+        print "Would publish repo '%s' to '%s' with dist '%s'" % (aptly_repo, target, release)
     else:
         print "Publising repo '%s' to '%s'" % (aptly_repo, target)
         r = requests.put(args.api + '/publish/%s/%s' % (aptly_target, release), data={})
