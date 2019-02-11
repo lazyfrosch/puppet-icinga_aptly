@@ -146,7 +146,7 @@ def process_upload_deb(path, files, upload_meta):
         architectures = ['i386', 'amd64']
 
     if 'repo' in upload_meta:
-        aptly_repo = upload_meta['repo']
+        aptly_repo = aptly_safe_string(upload_meta['repo'])
     else:
         # remove icinga- prefix
         _short = re.sub('^icinga-', '', release)
