@@ -9,10 +9,7 @@ class icinga_aptly::install {
     location => $icinga_aptly::aptly_repo_base,
     release  => $icinga_aptly::aptly_repo_dist,
     repos    => 'main',
-    key      => {
-      id     => $icinga_aptly::aptly_gpg_key,
-      server => 'keyserver.ubuntu.com',
-    },
+    key      => $icinga_aptly::aptly_gpg_key,
   }
 
   -> package { 'aptly':
