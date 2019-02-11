@@ -4,7 +4,7 @@ require 'fileutils'
 require 'syslog/logger'
 require 'lockfile'
 
-ENV['APLY_HOME'] = '/var/www/html/aptly' unless ENV.has('APTLY_HOME')
+ENV['APLY_HOME'] = '/var/www/html/aptly' unless ENV.key?('APTLY_HOME')
 
 @log = Syslog::Logger.new 'update-rpm'
 
@@ -62,7 +62,7 @@ begin
   end
 
   # get all rpms uploaded to aptly
-  rpms = Dir["/var/www/html/aptly/upload/*/*.rpm"]
+  rpms = Dir[ENV['APLY_HOME'] + "/upload/*/*.rpm"]
   @log.info "Found #{rpms.length} new RPMs"
 
   # get parent directory of each rpm
