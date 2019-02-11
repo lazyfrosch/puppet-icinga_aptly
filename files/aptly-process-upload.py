@@ -20,8 +20,8 @@ from hashlib import sha1
 
 import requests
 
-aptly_home = os.environ.get('APLY_HOME', '/var/lib/aptly')
-aptly_api = os.environ.get('APLY_API', 'http://127.0.0.1:8080/api')
+aptly_home = os.environ.get('APTLY_HOME', '/var/lib/aptly')
+aptly_api = os.environ.get('APTLY_API', 'http://127.0.0.1:8080/api')
 
 parser = argparse.ArgumentParser(description='Processing RPM uploads from Aptly')
 parser.add_argument('--upload', help='upload spool directory', default=('%s/upload' % aptly_home))
