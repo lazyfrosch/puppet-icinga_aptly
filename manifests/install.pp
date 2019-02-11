@@ -5,14 +5,17 @@ class icinga_aptly::install {
 
   ensure_packages($icinga_aptly::params::helper_packages)
 
-  apt::source { 'aptly':
-    location => $icinga_aptly::aptly_repo_base,
-    release  => $icinga_aptly::aptly_repo_dist,
-    repos    => 'main',
-    key      => $icinga_aptly::aptly_gpg_key,
+  if $icinga_aptly::manage_repo {
+    apt::source { 'aptly':
+      location => $icinga_aptly::aptly_repo_base,
+      release  => $icinga_aptly::aptly_repo_dist,
+      repos    => 'main',
+      key      => $icinga_aptly::aptly_gpg_key,
+      before   => Package['aptly'],
+    }
   }
 
-  -> package { 'aptly':
+  package { 'aptly':
     ensure          => $icinga_aptly::aptly_version,
     install_options => '--no-install-recommends',
   }

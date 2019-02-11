@@ -30,3 +30,11 @@ test/puppet-6:
   image: ruby:2.5
   variables:
     PUPPET_VERSION: '~> 6.0'
+
+test/rubocop:
+  <<: *test
+  image: ruby:2.5
+  variables:
+    PUPPET_VERSION: '~> 6.0'
+  script:
+    - bundle exec rake rubocop

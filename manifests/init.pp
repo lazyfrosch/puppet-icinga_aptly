@@ -1,5 +1,6 @@
 class icinga_aptly(
   Boolean $manage_apache                         = false,
+  Boolean $manage_repo                           = true,
   String $aptly_version                          = '1.3.0',
   String $aptly_gpg_key                          = '26DA9D8630302E0B86A7A2CBED75B5A4483DA07C',
   String $aptly_repo_base                        = 'http://repo.aptly.info/',

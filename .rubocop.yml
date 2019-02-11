@@ -4,7 +4,7 @@ AllCops:
   Include:
     - ./**/*.rb
   Exclude:
-    - files/**/*
+    - files/**/*legacy*
     - vendor/**/*
     - .vendor/**/*
     - pkg/**/*
