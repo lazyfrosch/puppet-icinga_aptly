@@ -31,9 +31,9 @@ class RpmSigner(object):
 
     def get_gpg_name(self):
         if not self.gpg_name:
-            _out = check_output([self.gpg_bin, '-K', '--with-colon'])
+            _out = check_output([self.gpg_bin, '-K', '--with-colon']).strip()
 
-            keys = re.split(r"\r?\n", _out.strip())
+            keys = re.findall(r"^sec:.*", _out)
             if not keys:
                 raise SigningError("Could not detect a GPG private key!")
             elif len(keys) > 1:
