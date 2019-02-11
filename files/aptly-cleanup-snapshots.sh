@@ -8,8 +8,9 @@ if [ "$(id -un)" != aptly ]; then
 fi
 
 log() {
-  level="$2"
-  if [ -z "$level" ]; then
+  if [ $# -ge 2 ]; then
+    level="$2"
+  else
     level=info
   fi
   logger -p "local3.${level}" -t "aptly-cleanup-snapshots" -- "$1"
@@ -36,10 +37,11 @@ for repo in "${repos[@]}"; do
   log "Cleaning up repository $repo"
 
   dup=false
+  pkg_old=
   for p in $(aptly repo search "$repo" "Architecture" | sort -V); do
     #pkg=$(echo "$p" | sed 's,_.*,,')
     pkg="${p/_*/}"
-    if test "$pkg" = "$pkg_old"; then
+    if [ "$pkg" = "$pkg_old" ]; then
         dup=true
     elif $dup; then
         dup=false
@@ -86,7 +88,7 @@ for publish in "${published[@]}"; do
       ;;
   esac
 
-  log "Publishing repository $1/$2"
+  log "Publishing repository $os/$repo"
   if ! aptly publish update "$repo" "$os" 2>"$stderr"; then
     log "Could not update publish: $publish $(cat "$stderr")" "error"
   fi
