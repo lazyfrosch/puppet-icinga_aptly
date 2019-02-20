@@ -4,11 +4,11 @@ require 'fileutils'
 require 'syslog/logger'
 require 'lockfile'
 
-ENV['APLY_HOME'] = '/var/www/html/aptly' unless ENV.key?('APTLY_HOME')
+ENV['APTLY_HOME'] = '/var/www/html/aptly' unless ENV.key?('APTLY_HOME')
 
 @log = Syslog::Logger.new 'update-rpm'
 
-lockfile = Lockfile.new ENV['APLY_HOME'] + '/.rpmlock', retries: 0
+lockfile = Lockfile.new ENV['APTLY_HOME'] + '/.rpmlock', retries: 0
 begin
   lockfile.lock
 rescue Lockfile::MaxTriesLockError
@@ -17,7 +17,7 @@ rescue Lockfile::MaxTriesLockError
 end
 
 begin
-  @repos_prefix = ENV['APLY_HOME'] + '/public/'
+  @repos_prefix = ENV['APTLY_HOME'] + '/public/'
   Dir.mkdir(@repos_prefix) unless File.directory?(@repos_prefix)
 
   def removeOldSnapshots(source, destination)
@@ -62,7 +62,7 @@ begin
   end
 
   # get all rpms uploaded to aptly
-  rpms = Dir[ENV['APLY_HOME'] + "/upload/*/*.rpm"]
+  rpms = Dir[ENV['APTLY_HOME'] + "/upload/*/*.rpm"]
   @log.info "Found #{rpms.length} new RPMs"
 
   # get parent directory of each rpm
