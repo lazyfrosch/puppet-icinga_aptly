@@ -25,7 +25,7 @@ begin
       next
     end
     filename = File.basename(source)
-    destination = repos_prefix
+    destination = @repos_prefix
     FileUtils.mv(source, "#{destination}/#{filename}")
     @log.info "Moved #{source} to #{destination}/#{filename}"
   end
