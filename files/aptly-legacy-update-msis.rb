@@ -3,7 +3,7 @@
 require 'fileutils'
 require 'syslog/logger'
 
-ENV['APTLY_HOME'] = '/var/www/html/aptly' unless ENV.has('APTLY_HOME')
+ENV['APTLY_HOME'] = '/var/www/html/aptly' unless ENV.key?('APTLY_HOME')
 
 @log = Syslog::Logger.new 'update-msi'
 begin
