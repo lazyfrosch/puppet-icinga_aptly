@@ -49,6 +49,7 @@ class icinga_aptly::jobs(
       environment => [
         "MAILTO=\"${mailto}\"",
         "APTLY_HOME=\"${icinga_aptly::aptly_home}\"",
+        "PATH=\"/usr/local/bin:/usr/bin:/bin\"",
       ];
     'aptly-cleanup-snapshots':
       ensure  => $cleanup_ensure,
